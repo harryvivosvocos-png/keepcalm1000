@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Keep Calm – Days to Go</title>
 <meta name="description" content="Defence Secretary Wes Streeting says Britain has &quot;a little over 1,000 days&quot; to be ready to &quot;fight and win&quot; a war. Keep calm and count them down. Satire.">
-<meta name="theme-color" content="#D7261E">
+<meta name="theme-color" content="#D0231B">
 <link rel="canonical" href="https://keepcalm1000.co.uk/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -34,23 +34,23 @@
     font-display: block;
   }
   :root {
-    --red: #D7261E;
+    --red: #D0231B;
     --red-dark: #B51E17;
     --cream: #F4EEE0;
   }
   * { box-sizing: border-box; margin: 0; }
-  html, body { height: 100%; }
   body {
     background: var(--red-dark);
     color: var(--cream);
     font: 700 16px/1 'Oswald', 'Arial Narrow', sans-serif;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    overflow-x: hidden;
   }
   .poster {
     position: relative;
+    flex: none;
     width: 100vw;
     width: min(100vw, 80svh);
     height: 100vh;
@@ -114,6 +114,137 @@
     letter-spacing: 0;
   }
   footer a { color: inherit; }
+  .more {
+    color: inherit;
+    font-size: 14px;
+    letter-spacing: .1em;
+    text-underline-offset: 4px;
+  }
+
+  /* ---- Be Ready panel: below the poster on phones, beside it on wide screens ---- */
+  .panel {
+    width: 100%;
+    background: var(--cream);
+    color: var(--red-dark);
+    padding: 40px 16px 56px;
+    overflow-x: hidden;
+  }
+  .panel-inner { max-width: 440px; margin: 0 auto; }
+  .panel h2 {
+    color: var(--red);
+    font-size: 32px;
+    line-height: 1.05;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .panel section + section { margin-top: 48px; }
+  .panel p, .panel li, .panel legend, .panel .link {
+    font: 400 16px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  .panel .intro { margin-top: 8px; }
+  .panel fieldset { border: 0; padding: 0; margin-top: 24px; }
+  .panel legend {
+    font: 700 14px/1 'Oswald', sans-serif;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 0 0 8px;
+    border-bottom: 2px solid currentColor;
+    width: 100%;
+  }
+  .panel ul { list-style: none; padding: 0; }
+  .check label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(181, 30, 23, .2);
+    cursor: pointer;
+  }
+  .check input {
+    appearance: none;
+    -webkit-appearance: none;
+    flex: none;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    border: 2px solid var(--red-dark);
+    border-radius: 2px;
+    background: var(--cream) center / 16px no-repeat;
+    cursor: pointer;
+  }
+  .check input:checked {
+    background-color: var(--red-dark);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 8.5l4 4 8-9' fill='none' stroke='%23F4EEE0' stroke-width='2.5'/%3E%3C/svg%3E");
+  }
+  .check input:checked + span { text-decoration: line-through; text-decoration-thickness: 2px; }
+  .check input:focus-visible, .panel a:focus-visible, .panel .link:focus-visible {
+    outline: 3px solid var(--red-dark);
+    outline-offset: 3px;
+  }
+  .panel .note { font-size: 14px; margin-top: 8px; }
+  .panel .links { margin-top: 20px; font-size: 14px; }
+  .panel a { color: inherit; }
+  .panel .link {
+    font-size: 14px;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    min-height: 0;
+    text-decoration: underline;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .panel .link:hover { background: none; color: inherit; }
+  .badge {
+    width: 240px;
+    height: 240px;
+    margin: 32px auto 8px;
+    border-radius: 50%;
+    background: var(--red);
+    color: var(--cream);
+    box-shadow: 0 0 0 4px var(--cream), 0 0 0 8px var(--red);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 30px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    transform: rotate(-8deg);
+    animation: stamp .4s cubic-bezier(.2, 1.5, .4, 1);
+  }
+  .badge-slot { overflow: hidden; padding: 0 12px; }
+  .badge svg { width: 56px; height: auto; }
+  .badge small { font-size: 14px; }
+  .badge strong { font-size: 25px; line-height: 1.1; }
+  @keyframes stamp { from { transform: rotate(-8deg) scale(1.4); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .badge { animation: none; } }
+  .units-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(181, 30, 23, .2);
+  }
+  .units-list .u-num {
+    flex: none;
+    min-width: 3.2em;
+    color: var(--red);
+    font: 700 40px/1 'Oswald', sans-serif;
+    letter-spacing: .02em;
+    text-align: right;
+  }
+  .units[hidden] { display: none; }
+
+  @media (min-width: 900px) and (min-aspect-ratio: 4/3) {
+    body { flex-direction: row; justify-content: center; height: 100vh; height: 100svh; overflow: hidden; }
+    .panel { flex: none; width: min(440px, calc(100vw - 80svh)); height: 100%; overflow-y: auto; padding: 48px 32px; }
+    .more { display: none; }
+  }
   .toast {
     position: fixed;
     left: 50%;
@@ -152,6 +283,7 @@
     <button type="button" id="save">Save poster</button>
     <button type="button" id="share">Share</button>
   </div>
+  <a class="more" href="#ready-panel">Are you ready? ↓</a>
   <footer>
     Satire. In the Sunday Telegraph in October 2026, Defence Secretary Wes Streeting wrote that Britain has
     “a little over 1,000 days” to be ready, alongside its allies, to “fight and win” a war.
@@ -160,13 +292,40 @@
     <a href="https://beready.campaign.gov.uk/" rel="noopener">Official Be Ready guidance</a>
   </footer>
 </main>
+
+<aside class="panel" id="ready-panel" aria-label="Be Ready checklist and the wait in British units">
+  <div class="panel-inner">
+    <section class="check">
+      <h2>Be Ready Checklist</h2>
+      <p class="intro">The government's advice, plus today's essential extras. Tick the lot.</p>
+      <fieldset>
+        <legend>Official advice</legend>
+        <ul id="official"></ul>
+      </fieldset>
+      <fieldset>
+        <legend>Plus today's extras</legend>
+        <ul id="extras"></ul>
+        <p class="note">New extras every day at midnight (UK time).</p>
+      </fieldset>
+      <div id="badge" class="badge-slot" role="status"></div>
+      <p class="links">
+        <a href="https://beready.campaign.gov.uk/" rel="noopener">Read the full Be Ready guidance</a> ·
+        <button type="button" class="link" id="reset">Reset ticks</button>
+      </p>
+    </section>
+    <section class="units" id="units-section">
+      <h2>The wait, in British units</h2>
+      <ul class="units-list" id="units"></ul>
+    </section>
+  </div>
+</aside>
 <div class="toast" id="toast" role="status"></div>
 
 <script type="module">
-  import { getState, SITE_URL } from '/lib/countdown.js';
+  import { getState, getChecklist, britishUnits, SITE_URL } from '/lib/countdown.js';
   import { CROWN, crownSvg } from '/lib/crown.js';
 
-  const RED = '#D7261E';
+  const RED = '#D0231B';
   const CREAM = '#F4EEE0';
   const $ = (id) => document.getElementById(id);
 
@@ -183,8 +342,75 @@
     $('num').textContent = s.ready ? '' : String(s.days);
     $('tagline').textContent = s.tagline;
     document.title = s.ready ? 'Keep Calm – We Are Now Ready*' : `Keep Calm – ${s.days} Days to Go`;
+    renderChecklist(s);
+    renderUnits(s);
     poster = null;
     preparePoster(s);
+  }
+
+  // ---- Be Ready checklist (ticks kept in this browser only) ----
+
+  const STORE = 'kc-checklist-v1';
+  let ticks = {};
+  try { ticks = JSON.parse(localStorage.getItem(STORE)) || {}; } catch {}
+  const saveTicks = () => { try { localStorage.setItem(STORE, JSON.stringify(ticks)); } catch {} };
+
+  function renderItems(ul, items) {
+    ul.replaceChildren(...items.map(({ id, label }) => {
+      const input = Object.assign(document.createElement('input'), { type: 'checkbox', checked: !!ticks[id] });
+      input.dataset.id = id;
+      const text = Object.assign(document.createElement('span'), { textContent: label });
+      const lab = document.createElement('label');
+      lab.append(input, text);
+      const li = document.createElement('li');
+      li.append(lab);
+      return li;
+    }));
+  }
+
+  function renderChecklist(s) {
+    const { official, extras } = getChecklist(s.days);
+    renderItems($('official'), official);
+    renderItems($('extras'), extras);
+    updateBadge();
+  }
+
+  let badgeOn = false;
+  function updateBadge() {
+    const boxes = [...document.querySelectorAll('.check input[type=checkbox]')];
+    const all = boxes.length > 0 && boxes.every((b) => b.checked);
+    if (all === badgeOn) return;
+    badgeOn = all;
+    $('badge').innerHTML = all
+      ? `<div class="badge">${crownSvg(CREAM)}<small>You are now</small><strong>More prepared than the MoD</strong></div>`
+      : '';
+  }
+
+  $('ready-panel').addEventListener('change', (e) => {
+    const id = e.target.dataset?.id;
+    if (!id) return;
+    if (e.target.checked) ticks[id] = true; else delete ticks[id];
+    saveTicks();
+    updateBadge();
+  });
+
+  $('reset').addEventListener('click', () => {
+    ticks = {};
+    saveTicks();
+    document.querySelectorAll('.check input[type=checkbox]').forEach((b) => { b.checked = false; });
+    updateBadge();
+  });
+
+  // ---- The wait, in British units ----
+
+  function renderUnits(s) {
+    $('units-section').hidden = s.ready;
+    $('units').replaceChildren(...britishUnits(s.days).map(({ value, label }) => {
+      const li = document.createElement('li');
+      const num = Object.assign(document.createElement('span'), { className: 'u-num', textContent: value });
+      li.append(num, Object.assign(document.createElement('span'), { textContent: label }));
+      return li;
+    }));
   }
 
   // ---- 1080×1350 poster drawn straight to canvas ----
