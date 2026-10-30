@@ -1,0 +1,11 @@
+{
+  "name": "keep-calm-1000",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "TZ=UTC node --test tests/*.test.mjs && TZ=America/Los_Angeles node --test tests/*.test.mjs && TZ=Pacific/Kiritimati node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "@vercel/og": "^0.11.1"
+  }
+}
