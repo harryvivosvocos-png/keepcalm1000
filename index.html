@@ -239,6 +239,36 @@
     text-align: right;
   }
   .units[hidden] { display: none; }
+  .live-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin: 0 10px 4px 0;
+    border-radius: 50%;
+    background: var(--red);
+    vertical-align: middle;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { opacity: .25; } }
+  @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+  .cam-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin-top: 16px;
+    background:
+      repeating-linear-gradient(0deg, rgba(244, 238, 224, .07) 0 2px, transparent 2px 6px),
+      linear-gradient(var(--cream), var(--cream)) center / 2px 40% no-repeat,
+      linear-gradient(var(--cream), var(--cream)) center / 22% 2px no-repeat,
+      var(--red-dark);
+    box-shadow: 0 0 0 4px var(--red-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cam-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .cam-start { background: var(--red-dark); position: relative; }
+  .cam-start:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
 
   @media (min-width: 900px) and (min-aspect-ratio: 4/3) {
     body { flex-direction: row; justify-content: center; height: 100vh; height: 100svh; overflow: hidden; }
@@ -295,6 +325,15 @@
 
 <aside class="panel" id="ready-panel" aria-label="Be Ready checklist and the wait in British units">
   <div class="panel-inner">
+    <section class="cam" aria-labelledby="cam-title">
+      <h2 id="cam-title"><span class="live-dot" aria-hidden="true"></span>Live Invasion-Watch Cam</h2>
+      <p class="intro">Monitoring London Bridge around the clock for mounting signs of an impending invasion. Nothing to report. Yet.</p>
+      <div class="cam-frame" id="cam">
+        <button type="button" class="cam-start" id="cam-start">▶ Start the cam</button>
+      </div>
+      <p class="note">Live feed via YouTube; it only loads when you press start.
+        <a href="https://www.youtube.com/watch?v=MXmzsjABC-U" rel="noopener">Watch on YouTube</a></p>
+    </section>
     <section class="check">
       <h2>Be Ready Checklist</h2>
       <p class="intro">The government's advice, plus today's essential extras. Tick the lot.</p>
@@ -399,6 +438,20 @@
     saveTicks();
     document.querySelectorAll('.check input[type=checkbox]').forEach((b) => { b.checked = false; });
     updateBadge();
+  });
+
+  // ---- Invasion-Watch Cam: nothing loads from YouTube until the visitor presses start ----
+
+  const CAM_ID = 'MXmzsjABC-U';
+  $('cam-start').addEventListener('click', () => {
+    const f = document.createElement('iframe');
+    f.src = `https://www.youtube-nocookie.com/embed/${CAM_ID}?autoplay=1&mute=1&playsinline=1&rel=0`;
+    f.title = 'Live webcam: London Bridge';
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.referrerPolicy = 'strict-origin-when-cross-origin';
+    f.allowFullscreen = true;
+    $('cam').replaceChildren(f);
+    f.focus();
   });
 
   // ---- The wait, in British units ----
