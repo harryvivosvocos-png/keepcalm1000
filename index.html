@@ -90,7 +90,43 @@
   }
   [data-ready="true"] .count, [data-ready="false"] .ready,
   [data-ready="true"] .rule, [data-ready="true"] .tagline { display: none; }
-  .actions { display: flex; gap: 12px; margin-top: 1.5cqh; }
+  .actions { position: relative; display: flex; gap: 12px; margin-top: 1.5cqh; }
+  .share-menu {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    width: min(320px, calc(100vw - 32px));
+    padding: 16px;
+    background: var(--cream);
+    color: var(--red-dark);
+    box-shadow: 0 0 0 3px var(--red-dark), 0 12px 32px rgba(0, 0, 0, .35);
+    text-align: left;
+  }
+  .share-menu[hidden], .share-menu [hidden] { display: none; }
+  .share-head { font-size: 14px; letter-spacing: .12em; margin-bottom: 10px; }
+  .share-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .share-menu a, .share-menu button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 8px;
+    font: 700 15px/1 'Oswald', sans-serif;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--red-dark);
+    background: transparent;
+    border: 2px solid var(--red-dark);
+    border-radius: 2px;
+  }
+  .share-menu a:hover, .share-menu button:hover { background: var(--red-dark); color: var(--cream); }
+  .share-menu a:focus-visible, .share-menu button:focus-visible { outline: 3px solid var(--red-dark); outline-offset: 2px; }
+  .share-native, .share-copy { width: 100%; }
+  .share-native { margin-bottom: 8px; background: var(--red-dark) !important; color: var(--cream) !important; }
+  .share-copy { margin-top: 8px; }
   button {
     font: inherit;
     font-size: 15px;
@@ -311,7 +347,13 @@
   <p class="tagline" id="tagline"></p>
   <div class="actions">
     <button type="button" id="save">Save poster</button>
-    <button type="button" id="share">Share</button>
+    <button type="button" id="share" aria-expanded="false" aria-controls="share-menu">Share</button>
+    <div class="share-menu" id="share-menu" hidden>
+      <p class="share-head">Spread the calm</p>
+      <button type="button" class="share-native" id="share-native" hidden>Share image…</button>
+      <div class="share-grid" id="share-links"></div>
+      <button type="button" class="share-copy" id="share-copy">Copy link</button>
+    </div>
   </div>
   <a class="more" href="#ready-panel">Are you ready? ↓</a>
   <footer>
@@ -553,27 +595,85 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   });
 
-  $('share').addEventListener('click', async () => {
+  function shareInfo() {
     const s = state;
     const url = `${SITE_URL}/?d=${s.isoDate}`; // a fresh URL each day so link previews re-scrape
-    const text = s.ready ? 'Keep calm. We are now ready*' : `Keep calm. ${s.days} days to go.`;
+    const text = s.ready
+      ? 'Keep calm. Britain is now ready for war*. (*probably)'
+      : `Keep calm. ${s.days} days until Britain is supposed to be ready for war.`;
+    return { url, text };
+  }
+
+  // Plain links to each site's own "post this" page: no third-party scripts, nothing loads until clicked.
+  const SHARE_TARGETS = [
+    ['X', (u, t) => `https://x.com/intent/tweet?text=${t}&url=${u}`],
+    ['WhatsApp', (u, t) => `https://wa.me/?text=${t}%20${u}`],
+    ['Facebook', (u) => `https://www.facebook.com/sharer/sharer.php?u=${u}`],
+    ['Bluesky', (u, t) => `https://bsky.app/intent/compose?text=${t}%20${u}`],
+    ['Threads', (u, t) => `https://www.threads.com/intent/post?text=${t}%20${u}`],
+    ['Reddit', (u, t) => `https://www.reddit.com/submit?url=${u}&title=${t}`],
+    ['LinkedIn', (u) => `https://www.linkedin.com/sharing/share-offsite/?url=${u}`],
+    ['Email', (u, t) => `mailto:?subject=${encodeURIComponent('Keep Calm')}&body=${t}%0A%0A${u}`],
+  ];
+
+  function fillShareLinks() {
+    const { url, text } = shareInfo();
+    const u = encodeURIComponent(url), t = encodeURIComponent(text);
+    $('share-links').replaceChildren(...SHARE_TARGETS.map(([name, build]) => {
+      const a = Object.assign(document.createElement('a'), { href: build(u, t), textContent: name });
+      if (name !== 'Email') { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+      a.addEventListener('click', closeShareMenu);
+      return a;
+    }));
+  }
+
+  $('share-native').hidden = !navigator.share;
+
+  function openShareMenu() {
+    fillShareLinks();
+    $('share-menu').hidden = false;
+    $('share').setAttribute('aria-expanded', 'true');
+    $('share-menu').querySelector('a, button:not([hidden])').focus();
+  }
+  function closeShareMenu() {
+    $('share-menu').hidden = true;
+    $('share').setAttribute('aria-expanded', 'false');
+  }
+  $('share').addEventListener('click', () => ($('share-menu').hidden ? openShareMenu() : closeShareMenu()));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !$('share-menu').hidden) { closeShareMenu(); $('share').focus(); }
+  });
+  document.addEventListener('click', (e) => {
+    if (!$('share-menu').hidden && !e.target.closest('#share-menu, #share')) closeShareMenu();
+  });
+
+  // The phone's own share sheet, with the poster image attached.
+  $('share-native').addEventListener('click', async () => {
+    const { url, text } = shareInfo();
     const data = { title: 'Keep Calm', text, url };
     // No await before navigator.share when the poster is ready: iOS needs the tap gesture intact.
     const p = poster ?? await getPoster();
     const file = new File([p.blob], p.name, { type: 'image/png' });
     try {
-      if (navigator.canShare?.({ files: [file] })) return await navigator.share({ ...data, files: [file] });
-      if (navigator.share) return await navigator.share(data);
+      if (navigator.canShare?.({ files: [file] })) await navigator.share({ ...data, files: [file] });
+      else await navigator.share(data);
+      closeShareMenu();
     } catch (e) {
-      if (e.name === 'AbortError') return;
+      if (e.name !== 'AbortError') copyLink();
     }
+  });
+
+  async function copyLink() {
+    const { url } = shareInfo();
+    closeShareMenu();
     try {
       await navigator.clipboard.writeText(url);
       toast('Link copied');
     } catch {
       toast(url);
     }
-  });
+  }
+  $('share-copy').addEventListener('click', copyLink);
 
   render();
   setInterval(render, 60_000);
